@@ -1,0 +1,47 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summary Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        div {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Summary Page</h1>
+
+    <div>
+
+        <h2>Total Students: {{ total_students }}</h2>
+        <h2>Total Fees: {{ total_fees|indian_number_format}}</h2>
+        <h2 style="color: rgb(48, 198, 93);font-weight: bold;">Amount Collected: {{ total_collected|indian_number_format  }}</h2>
+        <h2 style="color: rgb(234, 6, 6);font-weight: bold;">Amount Due: {{ total_due|indian_number_format }}</h2>
+
+        <h2>Fee Cleared Students: {{ students_with_no_due }}</h2>
+    </div>
+
+</body>
+</html>

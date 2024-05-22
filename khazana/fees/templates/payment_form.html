@@ -1,0 +1,7 @@
+# forms.py
+from django import forms
+
+class PaymentForm(forms.Form):
+    admission_number = forms.CharField(label="Admission Number")
+    amount_paid = forms.DecimalField(label="Amount Paid")
+    receipt_number = forms.CharField(label="Receipt Number")

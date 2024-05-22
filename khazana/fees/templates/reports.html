@@ -1,0 +1,148 @@
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 150px;
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right">
+        <a href="{% url 'homepage' %}">
+            <button type="button">Home</button>
+        </a>
+    </div>
+
+    <h1>Reports</h1>
+
+    <form method="GET">
+        <label for="branch">Branch:</label>
+        <select name="branch" id="branch">
+            <option value="">All</option>
+            {% for choice in branch_choices %}
+                <option value="{{ choice.0 }}" {% if branch == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="course">Course:</label>
+        <input type="text" name="course" value="{{ course }}">
+
+        <label for="class_darja">Class:</label>
+        <select name="class_darja" id="class_darja">
+            <option value="">All</option>
+            {% for choice in class_choices %}
+                <option value="{{ choice.0 }}" {% if selected_class_darja == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="months_paid">Months Paid <</label>
+        <input type="number" name="months_paid" min="0" max="12" step="1" value="{{ selected_months_paid }}">
+
+        <button type="submit">Filter</button>
+        <a href="{% url 'generate_pdf' %}?branch={{ branch }}&course={{ course }}&class_darja={{ selected_class_darja }}&months_paid={{ selected_months_paid }}" target="_blank">
+            <button type="button">Download PDF</button>
+        </a>
+        <a href="{% url 'generate_excel' %}?branch={{ branch }}&course={{ course }}&class_darja={{ selected_class_darja }}&months_paid={{ selected_months_paid }}">
+            <button type="button">Download Excel</button>
+        </a>
+    </form>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Admission Number</th>
+                <th>Name</th>
+                <th>phone</th>
+                <th>Course</th>
+                <th>Branch</th>
+                <th>Class</th>
+                <th>Monthly Fees</th>
+                <th>Total Fees</th>
+                <th>Total Paid</th>
+                <th>Total Due</th>
+                <th>Months Paid</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in additional_info %}
+            <tr>
+                <td>{{ item.student.admission_number }}</td>
+                <td>{{ item.student.name }}</td>
+                <td>{{ item.student.phone }}</td>
+                <td>{{ item.student.course }}</td>
+                <td>{{ item.student.branch }}</td>
+                <td>{{ item.student.class_darja }}</td>
+                <td>{{ item.monthly_fees|indian_number_format  }}</td>
+                <td>{{ item.total_fees|indian_number_format }}</td>
+                <td style="color: rgb(34, 169, 88);font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_paid|indian_number_format  }}</td>
+                <td style="color: rgb(255, 85, 0);font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_due|indian_number_format  }}</td>
+                <td>{{ item.months_paid|floatformat:"1" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
