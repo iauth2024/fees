@@ -217,13 +217,17 @@ from django.template.loader import get_template
 from django.db.models import Sum
 from django.shortcuts import render
 
+
+from .models import Student, Payment
+
 def reports(request):
     # Fetch all students initially
     students = Student.objects.all()
 
-    # Get unique choices for branch and class_darja
+    # Get unique choices for branch, class_darja, and course
     branch_choices = Student.BRANCH_CHOICES
     class_choices = Student.CLASS_CHOICES
+    course_choices = Student.COURSE_CHOICES
 
     # Get filter parameters from the request
     course = request.GET.get('course', '')
@@ -270,12 +274,14 @@ def reports(request):
         'additional_info': additional_info,
         'branch_choices': branch_choices,
         'class_choices': class_choices,
+        'course_choices': course_choices,
         'course': course,
         'branch': branch,
         'selected_class_darja': class_darja,
         'selected_months_paid': months_paid,
     }
     return render(request, 'reports.html', context)
+
 
 
 def generate_pdf(request):
