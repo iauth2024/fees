@@ -1,3 +1,4 @@
+{% load custom_filters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,49 +9,37 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
         }
 
         h1 {
-            text-align: center;
-            margin: 20px 0;
-        }
-
-        form {
-            text-align: center;
             margin-bottom: 20px;
         }
 
-        label, select, input[type="number"] {
-            display: block;
-            margin: 10px auto;
-            width: 80%;
-            max-width: 300px;
+        form {
+            margin-bottom: 20px;
         }
 
-        select, input[type="number"] {
-            width: 100%;
+        label {
+            margin-right: 10px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            width: 150px;
+            padding: 5px;
+            margin-right: 10px;
         }
 
         button {
-            display: block;
-            margin: 10px auto;
-            padding: 10px 20px;
+            padding: 5px 10px;
             background-color: #007bff;
             color: white;
             border: none;
             cursor: pointer;
-            border-radius: 5px;
         }
 
         button:hover {
             background-color: #0056b3;
-        }
-
-        .top-right {
-            position: absolute;
-            top: 20px;
-            right: 20px;
         }
 
         table {
@@ -71,6 +60,12 @@
 
         tr:nth-child(even) {
             background-color: #f2f2f2;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
         }
     </style>
 </head>
