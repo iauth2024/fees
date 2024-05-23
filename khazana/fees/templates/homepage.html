@@ -13,7 +13,7 @@
             background-color: #f4f4f4;
         }
         .container {
-            max-width: 800px;
+            width: 90%; /* Adjusted for responsiveness */
             margin: 50px auto;
             text-align: center;
             background-color: #fff;
@@ -43,6 +43,7 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            flex: 1; /* Adjusted for responsiveness */
         }
         .button:hover {
             background-color: #0056b3;
@@ -58,15 +59,13 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            flex: 1; /* Adjusted for responsiveness */
         }
         .admin-button:hover {
             background-color: #218838;
         }
         /* Logout button styles */
         .logout-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             padding: 10px 20px;
             font-size: 16px;
             text-decoration: none;
@@ -76,6 +75,9 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            position: fixed; /* Adjusted for responsiveness */
+            top: 10px;
+            right: 10px;
         }
         .logout-button:hover {
             background-color: #c82333;
@@ -91,9 +93,24 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s;
+            flex: 1; /* Adjusted for responsiveness */
         }
         .download-button:hover, .summary-button:hover {
             background-color: #f57c00; /* Darker orange color on hover */
+        }
+        @media only screen and (max-width: 768px) {
+            /* Adjustments for smaller screens */
+            .container {
+                padding: 20px;
+            }
+            .button, .admin-button, .download-button, .summary-button {
+                font-size: 16px;
+                padding: 12px 24px;
+            }
+            .logout-button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -120,9 +137,6 @@
             <a href="{% url 'student_payment_report' %}" class="button">Student Payment Report</a>
             <a href="{% url 'user_payments' %}" class="button">View My Entries</a>
             <a href="{% url 'reports' %}" class="button">View Reports</a>
-            
-          
-            
         </div>
     </div>
 </body>
