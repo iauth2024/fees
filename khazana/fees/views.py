@@ -392,14 +392,8 @@ def generate_excel(request):
     return response
 
 
-
-
-
-
-
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
     template_name = 'custom_password_reset.html'
@@ -415,6 +409,11 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'custom_password_reset_complete.html'
+
+class CustomForgotPasswordView(auth_views.PasswordResetView):
+    template_name = 'custom_forgot_password.html'  # Customize this template
+    email_template_name = 'custom_password_reset_email.html'  # Use the same email template
+    success_url = reverse_lazy('password_reset_done')
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
