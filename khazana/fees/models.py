@@ -1,5 +1,8 @@
+# models.py
+
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Student(models.Model):
     BRANCH_CHOICES = [
@@ -8,7 +11,6 @@ class Student(models.Model):
         ('Ghatkesar', 'Ghatkesar'),
         ('Bandlaguda', 'Bandlaguda'),
     ]
-    
     COURSE_CHOICES = [
         ('Mahade Ashraf', 'Mahade Ashraf'),
         ('معہد ابرار', 'معہد ابرار'),
@@ -45,11 +47,20 @@ class Student(models.Model):
         ('Duwwam School (Baa)', 'دوم اسکول (ب)'),
         ('Suwwam', 'سوم'),
         ('Chahrum', 'چهارم'),
-        ('Alif', 'الف'),
-        ('Baa', 'ب'),
-        ('Jeem', 'ج'),
-        ('Daal', 'د'),
-        ('Toa', 'ط')
+        ('Hifz-Alif','Hifz-Alif'),
+        ('Hifz-Baa','Hifz-Baa'),
+        ('Hifz-Jeem','Hifz-Jeem'),
+        ('Hifz-Daal','Hifz-Daal'),
+        ('Hifz-Zaa','Hifz-Zaa'),
+        ('Hifz-Haa','Hifz-Haa'),
+        ('Hifz-Haah','Hifz-Haah'),
+        ('Hifz-Waav','Hifz-Waav'),
+        ('Nazira-Alif','Nazira-Alif'),
+        ('Nazira-Baa','Nazira-Baa'),
+        ('Nazira-Jeem','Nazira-Jeem'),
+        ('Nazira-Daal','Nazira-Daal'),
+       
+
     ]
     
     ADMISSION_CHOICES = [
@@ -59,8 +70,8 @@ class Student(models.Model):
     
     admission_number = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
-    phone = models.CharField(max_length=15, blank=True, null=True)  # Adjusted phone field
-    course = models.CharField(max_length=100, choices=COURSE_CHOICES)  # Added choices attribute
+    phone = models.CharField(max_length=10, blank=True, null=True)
+    course = models.CharField(max_length=100, choices=COURSE_CHOICES)
     class_darja = models.CharField(max_length=100, choices=CLASS_CHOICES)
     branch = models.CharField(max_length=100, choices=BRANCH_CHOICES)
     monthly_fees = models.DecimalField(max_digits=10, decimal_places=2)
@@ -69,6 +80,7 @@ class Student(models.Model):
     @property
     def total_fees(self):
         return self.monthly_fees * 12
+
 
 class Payment(models.Model):
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

@@ -1,3 +1,4 @@
+import io
 from multiprocessing import context
 from django.shortcuts import render, redirect
 from django.http import HttpResponseForbidden, JsonResponse
@@ -217,17 +218,18 @@ from django.template.loader import get_template
 from django.db.models import Sum
 from django.shortcuts import render
 
-
+from django.shortcuts import render
+from django.db.models import Sum
 from .models import Student, Payment
 
 def reports(request):
     # Fetch all students initially
     students = Student.objects.all()
 
-    # Get unique choices for branch, class_darja, and course
+    # Get unique choices for branch and class_darja
     branch_choices = Student.BRANCH_CHOICES
     class_choices = Student.CLASS_CHOICES
-    course_choices = Student.COURSE_CHOICES
+    course_choices = Student.COURSE_CHOICES  # Add this line
 
     # Get filter parameters from the request
     course = request.GET.get('course', '')
@@ -274,7 +276,7 @@ def reports(request):
         'additional_info': additional_info,
         'branch_choices': branch_choices,
         'class_choices': class_choices,
-        'course_choices': course_choices,
+        'course_choices': course_choices,  # Add this line
         'course': course,
         'branch': branch,
         'selected_class_darja': class_darja,
@@ -392,8 +394,14 @@ def generate_excel(request):
     return response
 
 
+
+
+
+
+
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
+from django.views.generic import TemplateView
 
 class CustomPasswordResetView(auth_views.PasswordResetView):
     template_name = 'custom_password_reset.html'
@@ -409,11 +417,6 @@ class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     template_name = 'custom_password_reset_complete.html'
-
-class CustomForgotPasswordView(auth_views.PasswordResetView):
-    template_name = 'custom_forgot_password.html'  # Customize this template
-    email_template_name = 'custom_password_reset_email.html'  # Use the same email template
-    success_url = reverse_lazy('password_reset_done')
 
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
@@ -558,20 +561,69 @@ def upload_file(request):
             file = request.FILES['file']
             if file.name.endswith('.xlsx'):
                 df = pd.read_excel(file)
+                success_students = []
+                failed_students = []
+                already_exists_students = []
+
                 for index, row in df.iterrows():
-                    student = Student(
-                        admission_number=row['Admission Number'],
-                        name=row['Name'],
-                        phone=row['Phone'],
-                        course=row['Course'],
-                        class_darja=row['Class'],
-                        branch=row['Branch'],
-                        monthly_fees=row['Monthly Fees'],
-                        student_type=row['Student Type']
-                    )
-                    student.save()
-            # Similar processing for other file types like Google Sheets
-            return HttpResponse('File uploaded successfully')
+                    admission_number = row['Admission Number']
+                    # Check if admission number already exists
+                    if Student.objects.filter(admission_number=admission_number).exists():
+                        already_exists_students.append({
+                            'admission_number': admission_number,
+                            'name': row['Name'],
+                            'reason': 'Already Exists'
+                        })
+                    else:
+                        # Check if admission number with different data exists
+                        if Student.objects.exclude(admission_number=admission_number).filter(
+                                name=row['Name'],
+                                phone=row['Phone'],
+                                course=row['Course'],
+                                class_darja=row['Class'],
+                                branch=row['Branch'],
+                                monthly_fees=row['Monthly Fees'],
+                                student_type=row['Student Type']
+                        ).exists():
+                            failed_students.append({
+                                'admission_number': admission_number,
+                                'name': row['Name'],
+                                'reason': 'Duplicate Number'
+                            })
+                        else:
+                            # If admission number doesn't exist with the same or different data, create new student
+                            student = Student(
+                                admission_number=admission_number,
+                                name=row['Name'],
+                                phone=row['Phone'],
+                                course=row['Course'],
+                                class_darja=row['Class'],
+                                branch=row['Branch'],
+                                monthly_fees=row['Monthly Fees'],
+                                student_type=row['Student Type']
+                            )
+                            student.save()
+                            success_students.append(student)
+
+                # Prepare data for the template
+                total_students_to_upload = len(df)
+                already_exists_no = len(already_exists_students)
+                failed_no = len(failed_students)
+                success_no = total_students_to_upload - failed_no - already_exists_no
+                newly_added_no = success_no  # Newly added students count
+
+                # Render the template with the upload result data
+                return render(request, 'upload_result.html', {
+                    'total_students_to_upload': total_students_to_upload,
+                    'already_exists_no': already_exists_no,
+                    'failed_no': failed_no,
+                    'success_no': success_no,
+                    'newly_added_no': newly_added_no,
+                    'already_exists_students': already_exists_students,
+                    'failed_students': failed_students,
+                    'success_students': success_students,
+                })
+
     else:
         form = UploadFileForm()
     return render(request, 'upload_file.html', {'form': form})

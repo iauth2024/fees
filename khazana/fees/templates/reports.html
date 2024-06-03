@@ -18,6 +18,9 @@
 
         form {
             margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         label {
@@ -42,10 +45,20 @@
             background-color: #0056b3;
         }
 
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         th, td {
@@ -62,10 +75,24 @@
             background-color: #f2f2f2;
         }
 
-        .top-right {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        /* Media query for smaller screens */
+        @media (max-width: 600px) {
+            form {
+                flex-direction: column;
+            }
+
+            select, input[type="text"], input[type="number"], button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            th, td {
+                white-space: nowrap;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
@@ -86,13 +113,14 @@
                 <option value="{{ choice.0 }}" {% if branch == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
             {% endfor %}
         </select>
-
         <label for="course">Course:</label>
         <select name="course" id="course">
             <option value="">All</option>
-            {% for choice in course_choices %}
-                <option value="{{ choice.0 }}" {% if course == choice.0 %}selected{% endif %}>{{ choice.1 }}</option>
+            {% for course_choice in course_choices %}
+                <option value="{{ course_choice.0 }}" {% if course == course_choice.0 %}selected{% endif %}>{{ course_choice.1 }}</option>
             {% endfor %}
+        
+        
         </select>
 
         <label for="class_darja">Class:</label>
@@ -115,39 +143,41 @@
         </a>
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Admission Number</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Course</th>
-                <th>Branch</th>
-                <th>Class</th>
-                <th>Monthly Fees</th>
-                <th>Total Fees</th>
-                <th>Total Paid</th>
-                <th>Total Due</th>
-                <th>Months Paid</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in additional_info %}
-            <tr>
-                <td>{{ item.student.admission_number }}</td>
-                <td>{{ item.student.name }}</td>
-                <td>{{ item.student.phone }}</td>
-                <td>{{ item.student.course }}</td>
-                <td>{{ item.student.branch }}</td>
-                <td>{{ item.student.class_darja }}</td>
-                <td>{{ item.monthly_fees|indian_number_format }}</td>
-                <td>{{ item.total_fees|indian_number_format }}</td>
-                <td style="color: rgb(34, 169, 88); font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_paid|indian_number_format }}</td>
-                <td style="color: rgb(255, 85, 0); font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_due|indian_number_format }}</td>
-                <td>{{ item.months_paid|floatformat:"1" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Admission Number</th>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Course</th>
+                    <th>Branch</th>
+                    <th>Class</th>
+                    <th>Monthly Fees</th>
+                    <th>Total Fees</th>
+                    <th>Total Paid</th>
+                    <th>Total Due</th>
+                    <th>Months Paid</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in additional_info %}
+                <tr>
+                    <td>{{ item.student.admission_number }}</td>
+                    <td>{{ item.student.name }}</td>
+                    <td>{{ item.student.phone }}</td>
+                    <td>{{ item.student.course }}</td>
+                    <td>{{ item.student.branch }}</td>
+                    <td>{{ item.student.class_darja }}</td>
+                    <td>{{ item.monthly_fees|indian_number_format  }}</td>
+                    <td>{{ item.total_fees|indian_number_format }}</td>
+                    <td style="color: rgb(34, 169, 88);font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_paid|indian_number_format  }}</td>
+                    <td style="color: rgb(255, 85, 0);font-weight: bold; font-family: Arial, sans-serif;">{{ item.total_due|indian_number_format  }}</td>
+                    <td>{{ item.months_paid|floatformat:"1" }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
